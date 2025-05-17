@@ -1,2 +1,8 @@
-[functions]
-  directory = "netlify/functions"
+[build]
+  functions = "functions"
+  publish = "."
+
+[[redirects]]
+  from = "/log"
+  to = "/netlify/functions/logger"
+  status = 200
