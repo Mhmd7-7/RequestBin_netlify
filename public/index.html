@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>IP Info Sender</title>
+</head>
+<body>
+  <h1>Send Device Info</h1>
+  <button onclick="send()">Send Info</button>
+
+  <script>
+    async function getInfo() {
+      const ua = navigator.userAgent;
+      const battery = await navigator.getBattery?.();
+      const info = {
+        device: /android/i.test(ua) ? "Android" : /iPhone|iPad|iPod/.test(ua) ? "iOS" : "Other",
+        browser: /Chrome/.test(ua) ? "Chrome" : "Other",
+        lang: navigator.language,
+        width: screen.width,
+        height: screen.height,
+        battery: battery ? Math.round(battery.level * 100) + "%" : "n/a"
+      };
+
+      const ipv4 = await fetch("https://api.ipify.org/?format=json").then(r => r.json()).then(d => d.ip);
+      const ipv6 = await fetch("https://api64.ipify.org/?format=json").then(r => r.json()).then(d => d.ip);
+
+      return { ...info, ip4v: ipv4, ip6v: ipv6 };
+    }
+
+    async function send() {
+      const data = await getInfo();
+      const query = new URLSearchParams(data).toString();
+      const res = await fetch("/.netlify/functions/webhook?" + query);
+      const out = await res.json();
+      alert(JSON.stringify(out, null, 2));
+    }
+  </script>
+</body>
+</html>
