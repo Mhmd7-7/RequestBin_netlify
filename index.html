@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>RequestBin (Netlify)</title>
+</head>
+<body>
+  <h1>Send a test request to /api/logger</h1>
+  <button onclick="sendTest()">Send Test POST</button>
+  <pre id="result"></pre>
+
+  <script>
+    async function sendTest() {
+      const res = await fetch("/.netlify/functions/logger", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ test: "hello" }),
+      });
+      const json = await res.json();
+      document.getElementById("result").textContent = JSON.stringify(json, null, 2);
+    }
+  </script>
+</body>
+</html>
